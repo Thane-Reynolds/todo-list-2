@@ -1,0 +1,8 @@
+:root {
+  --background: #1b1220;
+  --background-transparent: rgba(19, 10, 26, 0.7);
+  --background-lighter: #3a2647;
+  --background-lightgrey: #8a7896;
+  --text-color: rgb(99, 252, 201);
+  --text-color-darker: rgb(164, 248, 220);
+}

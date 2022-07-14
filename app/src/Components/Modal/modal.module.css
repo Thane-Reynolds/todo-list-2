@@ -1,0 +1,28 @@
+.modalContainer {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100vw;
+  height: 100vh;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: var(--background-transparent);
+  overflow-x: hidden;
+  overflow-y: hidden;
+  padding-top: 7vh;
+  color: var(--text-color);
+}
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--background);
+  border: 2px solid var(--background-lightgrey);
+  border-radius: 5px;
+  padding: 5px;
+  width: 25vw;
+}
