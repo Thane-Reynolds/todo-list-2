@@ -1,6 +1,7 @@
 import 'dotenv/config'
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
+import { router } from './routes/index.js'
 
 const PORT = process.env.PORT
 
@@ -12,14 +13,7 @@ async function getUsers(){
 }
 
 
-app.get('/api/users', async (req, res) => {
-  const users = await getUsers().then((response) => response).catch((e)  => { throw e}).finally(async () => {await prisma.$disconnect()})
-  
-  console.log(users)
-
-  res.json({users: users})
-
-})
+app.use('/api', router)
 
 app.get('/', (req, res) => {
   res.send('API for Todo List app')
