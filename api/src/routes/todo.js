@@ -40,6 +40,7 @@ export async function createTodo(req, res){
   })
   res.json({ todo: todo})
 }
+
 // function for updating a todo
 export async function updateTodo(req, res){
   const todoSchema = z.object({
@@ -61,4 +62,13 @@ export async function updateTodo(req, res){
     },
   });
   res.json({ todo: todo });
+}
+
+// function for deleting a todo
+export async function deleteTodo(req, res){
+  const todoID = parseInt(req.params.id)
+  const todo = await prisma.todo.delete({
+    where: { id: todoID}
+  })
+  res.send('Entry deleted')
 }
