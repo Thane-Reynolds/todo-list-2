@@ -21,11 +21,16 @@ export async function getTodos(req, res){
 
 // function for creating a new todo
 export async function createTodo(req, res){
+  const dateSchema = z.preprocess((arg) => {
+    if (typeof arg == 'string' || arg instanceof Date) {
+      return new Date(arg);
+    }
+  }, z.date());
   const todoSchema = z.object({
     todoName: z.string(),
-    dueDate: z.optional(z.date()),
-    userID: z.number()
-  })
+    dueDate: z.optional(dateSchema),
+    userID: z.number(),
+  });
   console.log(req.body) // testing to make sure its coming through correct
   if(!req.body || !todoSchema.parse(req.body)){
     res.status(400).send('todoName and userID required')
@@ -43,13 +48,21 @@ export async function createTodo(req, res){
 
 // function for updating a todo
 export async function updateTodo(req, res){
+  const dateSchema = z.preprocess((arg) => {
+    if (typeof arg == "string" || arg instanceof Date){
+      return new Date(arg);
+    }
+  }, z.date());
   const todoSchema = z.object({
     todoName: z.string(),
-    dueDate: z.optional(z.date()),
-    userID: z.number()
-  })
-  if (!req.body || !todoSchema.parse(req.body)) {
-    res.status(400).send('todoName and userID required');
+    dueDate: z.optional(dateSchema),
+    userID: z.number(),
+  });
+  if (
+    !req.body ||
+    !todoSchema.parse(req.body)
+  ) {
+    res.status(400).send('error in format');
     return;
   }
   const todoID = parseInt(req.params.id)
