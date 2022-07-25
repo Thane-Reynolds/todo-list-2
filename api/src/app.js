@@ -2,15 +2,15 @@ import 'dotenv/config'
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import { router } from './routes/index.js'
+import bodyParser from 'body-parser'
 
 const PORT = process.env.PORT
 
 const app = express()
+app.use(bodyParser.json())
 const prisma = new PrismaClient()
 
-async function getUsers(){
-  return await prisma.user.findMany()
-}
+
 
 
 app.use('/api', router)

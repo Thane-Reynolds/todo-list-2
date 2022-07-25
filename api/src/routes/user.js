@@ -28,7 +28,12 @@ export async function createUser(req, res) {
     res.status(400).send('Username is required')
     return
   } 
-  res.json({ username: req.body.username });
+  const user = await prisma.user.create({
+    data: {
+      username: req.body.username
+    }
+  })
+  res.json({ user: user });
 }
 
 // function for deleting a user, delete both id and username
