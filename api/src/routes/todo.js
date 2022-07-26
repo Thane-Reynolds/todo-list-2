@@ -2,7 +2,12 @@ import {prisma} from '../lib/db.js'
 import { z } from 'zod'
 
 async function queryTodos(){
-  return await prisma.todo.findMany();
+  return await prisma.todo.findMany({
+    include: {
+      category: true,
+      location: true
+    }
+  });
 }
 
 export async function getTodos(req, res){
@@ -30,6 +35,8 @@ export async function createTodo(req, res){
     todoName: z.string(),
     dueDate: z.optional(dateSchema),
     userID: z.number(),
+    catID: z.number(),
+    locID: z.number()
   });
   console.log(req.body) // testing to make sure its coming through correct
   if(!req.body || !todoSchema.parse(req.body)){
@@ -40,7 +47,9 @@ export async function createTodo(req, res){
     data: {
       todoName: req.body.todoName,
       dueDate: (req.body.dueDate ? req.body.dueDate : null),
-      userID: req.body.userID
+      userID: req.body.userID,
+      catID: req.body.catID,
+      locID: req.body.locID
     }
   })
   res.json({ todo: todo})
@@ -57,6 +66,8 @@ export async function updateTodo(req, res){
     todoName: z.string(),
     dueDate: z.optional(dateSchema),
     userID: z.number(),
+    catID: z.number(),
+    locID: z.number()
   });
   if (
     !req.body ||
@@ -67,11 +78,13 @@ export async function updateTodo(req, res){
   }
   const todoID = parseInt(req.params.id)
   const todo = await prisma.todo.update({
-    where: { id: todoID},
+    where: { id: todoID },
     data: {
-      todoName: req.body.todoName,
+      todoName: req.body.name,
       dueDate: req.body.dueDate ? req.body.dueDate : null,
       userID: req.body.userID,
+      catID: req.body.catID,
+      locID: req.body.locID
     },
   });
   res.json({ todo: todo });
