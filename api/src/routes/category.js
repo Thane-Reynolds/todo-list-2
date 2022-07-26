@@ -26,7 +26,7 @@ export async function getCategories(req, res){
 }
 
 // make a new category
-export async function newCategory(req, res){
+export async function createCategory(req, res){
   const catSchema = z.object({
     name: z.string(),
     userID: z.number()
