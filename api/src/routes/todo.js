@@ -1,8 +1,12 @@
 import {prisma} from '../lib/db.js'
 import { z } from 'zod'
 
-async function queryTodos(){
+async function queryTodos(params){
+  const id = parseInt(params.userID)
   return await prisma.todo.findMany({
+    where:{
+      userID: id
+    },
     include: {
       category: true,
       location: true
@@ -11,7 +15,7 @@ async function queryTodos(){
 }
 
 export async function getTodos(req, res){
-  const todos = await queryTodos()
+  const todos = await queryTodos(req.params)
     .then(response => response)
     .catch((e) => {
       throw e;
@@ -34,6 +38,7 @@ export async function createTodo(req, res){
   const todoSchema = z.object({
     todoName: z.string(),
     dueDate: z.optional(dateSchema),
+    completed: z.optional(z.boolean()),
     userID: z.number(),
     catID: z.number(),
     locID: z.number()
@@ -47,6 +52,7 @@ export async function createTodo(req, res){
     data: {
       todoName: req.body.todoName,
       dueDate: (req.body.dueDate ? req.body.dueDate : null),
+      completed: (req.body.completed ? req.body.completed : false),
       userID: req.body.userID,
       catID: req.body.catID,
       locID: req.body.locID
@@ -65,9 +71,10 @@ export async function updateTodo(req, res){
   const todoSchema = z.object({
     todoName: z.string(),
     dueDate: z.optional(dateSchema),
+    completed: z.optional(z.boolean()),
     userID: z.number(),
-    catID: z.number(),
-    locID: z.number()
+    catID: z.optional(z.number()),
+    locID: z.optional(z.number()),
   });
   if (
     !req.body ||
@@ -80,11 +87,12 @@ export async function updateTodo(req, res){
   const todo = await prisma.todo.update({
     where: { id: todoID },
     data: {
-      todoName: req.body.name,
+      todoName: req.body.todoName,
       dueDate: req.body.dueDate ? req.body.dueDate : null,
+      completed: req.body.completed ? req.body.completed : false,
       userID: req.body.userID,
-      catID: req.body.catID,
-      locID: req.body.locID
+      catID: req.body.catID ? req.body.catID : null,
+      locID: req.body.locID ? req.body.locID : null,
     },
   });
   res.json({ todo: todo });

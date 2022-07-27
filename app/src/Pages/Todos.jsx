@@ -21,7 +21,7 @@ export const ACTIONS = {
 function reducer(todos, action) {
   switch (action.type){
     case ACTIONS.GET:
-      return [...action.payload]
+      return [...action.payload.todos]
     case ACTIONS.TOGGLE_COMPLETE:
       return todos.map(todo => {
         if(todo.id === action.payload.id){
@@ -36,8 +36,9 @@ function reducer(todos, action) {
             Accept: "application/json"
           }
         };
+        console.log("put action",action)
         
-        fetch(`${import.meta.env.VITE_API_ENDPOINT}todos`, init)
+        fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todos/${action.payload.userID}`, init)
           .then((response) => {
             if (!response) {
               throw new Error(`Error! ${response.status}`);
@@ -45,7 +46,7 @@ function reducer(todos, action) {
             return response.json();
           })
           .then((response) => {
-            return [...response];
+            return [...response.todos];
           })
         };
         fetchTodos();
@@ -89,6 +90,10 @@ export default function Todos (){
   const [showModal, setShowModal] = React.useState(false);
   const [categories, setCategories] = React.useState([]);
   const [locations, setLocations] = React.useState([]);
+  const [user, setUser] = React.useState({
+    id: 1,
+    username: 'Thane',
+  });
 
   // in callback so this doesn't keep running
   const fetchTodos = React.useCallback(() => {
@@ -98,7 +103,7 @@ export default function Todos (){
       },
     };
 
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}todos`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todos/${user.id}`, init)
       .then((response) => {
         if (!response) {
           throw new Error(`Error! ${response.status}`);
@@ -121,14 +126,14 @@ export default function Todos (){
       },
     };
 
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}categories`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/categories/${user.id}`, init)
       .then((response) => {
         if (!response) {
           throw new Error(`Error! ${response.status}`);
         }
         return response.json();
       })
-      .then((response) => setCategories([...response]));
+      .then((response) => setCategories([...response.categories]));
   });
 
   //calls the fetchCategories function on change
@@ -142,14 +147,14 @@ export default function Todos (){
       },
     };
 
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}locations`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/locations/${user.id}`, init)
       .then((response) => {
         if (!response) {
           throw new Error(`Error! ${response.status}`);
         }
         return response.json();
       })
-      .then((response) => setLocations([...response]));
+      .then((response) => setLocations([...response.locations]));
   });
 
   //calls the fetchLocations function on change
@@ -169,6 +174,7 @@ export default function Todos (){
             categories={categories}
             dispatch={dispatch}
             setShowModal={setShowModal}
+            user={user}
           />
         </Portal>
       )}
@@ -180,17 +186,12 @@ export default function Todos (){
               key={todo.id}
               todo={todo}
               dispatch={dispatch}
-              categories={categories}
-              locations={locations}
+              user={user}
             />
           );
         })}
         <ButtonRowDiv>
-          <NewTaskButton
-            categories={categories}
-            locations={locations}
-            handleModal={handleModal}
-          />
+          <NewTaskButton handleModal={handleModal} />
           <Link to="/category">
             <CategoryButton categories={categories} />
           </Link>

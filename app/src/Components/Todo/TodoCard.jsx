@@ -49,15 +49,14 @@ const DeleteButton = styled.button`
   }
 `;
 
-export default function TodoSlide({todo, dispatch, locations, categories}){
-  const { createdAt, todoName, category, updatedAt, completed, location, id} = todo;
+export default function TodoSlide({todo, dispatch, user}){
+  const { createdAt, todoName, updatedAt, completed, id, catID, locID, userID} = todo;
+  const category = (todo.category? todo.category.name : null)
+  const location = (todo.location? todo.location.name : null)
   const [formData, setFormData] = React.useState({
     todoName: todoName,
     completed: completed
   });
-
-  const currentLocation = locations.find(loc => loc.id === location)
-  const myCategory = categories.find(cat => cat.id === category)
 
   
   //update state on change, this will be submitted
@@ -82,23 +81,49 @@ export default function TodoSlide({todo, dispatch, locations, categories}){
   // send state to update API
   function handleSubmit(event){
     event.preventDefault()
+    let bodyContent;
+    if(catID && locID){
+      bodyContent = {
+        completed: event.target[0].checked,
+        todoName: event.target[1].value,
+        userID: userID,
+        catID: catID,
+        locID: locID,
+      };
+    } else if(catID && !locID){
+      bodyContent = {
+        completed: event.target[0].checked,
+        todoName: event.target[1].value,
+        userID: userID,
+        catID: catID,
+      };
+    } else if (!catID && locID){
+      bodyContent = {
+        completed: event.target[0].checked,
+        todoName: event.target[1].value,
+        userID: userID,
+        locID: locID,
+      };
+    } else if(!catID && !locID){
+      bodyContent = {
+      "completed": event.target[0].checked,
+      "todoName": event.target[1].value,
+      "userID": userID,
+      }
+    }
     const init = {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
-      "completed": event.target[0].checked,
-      "todoName": event.target[1].value,
-      "id": id
-      })
+      body: JSON.stringify(bodyContent)
     }
-      fetch(`${import.meta.env.VITE_API_ENDPOINT}todos/${id}`, init)
+      fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todo/${id}`, init)
         .then((response) => {
           if (!response.ok) {
             throw new Error(`Error! ${response.status}`);
           }
-          dispatch({ type: ACTIONS.PUT });
+          dispatch({ type: ACTIONS.PUT, payload: bodyContent });
         })
         
   }
@@ -111,7 +136,7 @@ export default function TodoSlide({todo, dispatch, locations, categories}){
         "Content-type": "application/json; charset=UTF-8",
       },
     };
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}todos/${id}`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todo/${id}`, init)
       .then((response) =>{
         if(!response){
           throw new Error(`Shits broken yo ${response.status}`)
@@ -130,7 +155,7 @@ export default function TodoSlide({todo, dispatch, locations, categories}){
        },
      };
 
-     fetch(`${import.meta.env.VITE_API_ENDPOINT}todos`, init)
+     fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todos/${user.id}`, init)
        .then((response) => {
          if (!response) {
            throw new Error(`Error! ${response.status}`);
@@ -161,9 +186,9 @@ export default function TodoSlide({todo, dispatch, locations, categories}){
         )}
       </Form>
       <ButtonRowDiv>
-        {myCategory && <div><p>{myCategory.categoryName}</p></div>}
-        {myCategory && currentLocation && <div><p>|</p></div>}
-        {currentLocation && <div><p>{currentLocation.locationName}</p></div>}
+        {category && <div><p>{category}</p></div>}
+        {category && location && <div><p>|</p></div>}
+        {location && <div><p>{location}</p></div>}
         <DeleteButton onClick={(e) => handleDelete(e)}>Delete</DeleteButton>
       </ButtonRowDiv>
     </CardWrapper>

@@ -11,7 +11,7 @@ datasource db {
 }
 
 model User {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   username  String
   todo      Todo[]
   category  Category[]
@@ -19,10 +19,11 @@ model User {
 }
 
 model Todo {
-  id        Int       @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   todoName  String  
-  dueDate   DateTime? 
-  user      User      @relation(fields: [userID], references: [id])
+  dueDate   DateTime?
+  completed Boolean    @default(false) 
+  user      User       @relation(fields: [userID], references: [id])
   userID    Int
   category  Category?  @relation(fields: [catID], references: [id])
   catID     Int?
