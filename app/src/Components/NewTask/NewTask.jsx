@@ -7,7 +7,11 @@ import { Combobox } from '@headlessui/react';
 export default function NewTaskModal({setShowModal, dispatch, locations, categories, user}) {
   
   // state for Category combobox
-  const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
+  const [selectedCategory, setSelectedCategory] = React.useState({
+    id: 0,
+    name: "",
+    userID: user.id
+  });
   const [catQuery, setCatQuery] = React.useState("");
   
   const filteredCategory =
@@ -20,7 +24,16 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
   });
   
   // state for Location combobox
-  const [selectedLocation, setSelectedLocation] = React.useState(locations[0]);
+  const [selectedLocation, setSelectedLocation] = React.useState({
+    id: 0,
+    name: "",
+    userID: user.id,
+    streetadd: "",
+    city: "",
+    state: "",
+    country: "",
+    postal: "",
+  });
   const [locQuery, setLocQuery] = React.useState("");
   
   const filteredlocation =
@@ -36,11 +49,9 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
   const [newTodo, setNewTodo] = React.useState({
     todoName: "",
     userID: user.id,
-    catID: selectedCategory.id,
     completed: false,
-    locID: selectedLocation.id,
   });
-  console.log("user", user)
+  console.log("Todo", newTodo)
 
   // sets show modal state from the close button, this is passed down from todos
   function handleModal() {
@@ -62,7 +73,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
     })
     setNewTodo({
       ...newTodo,
-      location: tempLoc.id,
+      locID: tempLoc.id,
     });
   }
 
@@ -75,7 +86,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
      });
      setNewTodo({
        ...newTodo,
-       category: tempCat.id,
+       catID: tempCat.id,
      });
    }
 
