@@ -7,6 +7,7 @@
   border: 2px solid var(--background-lightgrey);
   border-radius: 5px;
   padding: 5px;
+  min-width: 360px;
 }
 .topBar {
   display: flex;
@@ -30,56 +31,38 @@
   border-radius: 5px;
   border: 1px solid black;
 }
-
-/* style the combobox */
 .todoEntry {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
   margin: 0 auto;
+  gap: 5px;
 }
 .inputHolder {
   display: flex;
   justify-content: left;
   margin-top: 10px;
   width: 250px;
+  align-items: center;
 }
 .label {
   text-align: left;
   flex-grow: 1;
   margin-right: 5px;
 }
-.optionsHolder {
-  position: relative;
-  overflow: hidden;
-  border-radius: 5px;
-}
-.options {
-  overflow: auto;
-  background-color: white;
-  color: black;
-  list-style: none;
-  width: 100%;
-}
 .input {
   text-align: left;
+  max-height: 20px;
 }
-.selection {
-  width: 250px;
-  padding: 2px 6px;
-}
-.dropDown {
-  display: flex;
-  flex-direction: column;
-}
-.submitDiv {
-  margin: 10px 0px;
-}
-.submitDiv button {
+
+.button {
   padding: 3px 6px;
-  background-color: var(--text-color);
-  color: var(--background);
+  background: var(--text-color);
+  color: dark-grey;
+  border: 1px solid white;
   border-radius: 5px;
-  border: 1px solid var(--background-lightgrey);
+}
+.buttonDiv {
+  margin-top: 10px;
 }

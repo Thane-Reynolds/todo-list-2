@@ -3,6 +3,7 @@ import express from 'express'
 import { PrismaClient } from '@prisma/client'
 import { router } from './routes/index.js'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 
 const PORT = process.env.PORT
 
@@ -12,7 +13,7 @@ const prisma = new PrismaClient()
 
 
 
-
+app.use(cors())
 app.use('/api', router)
 
 app.get('/', (req, res) => {

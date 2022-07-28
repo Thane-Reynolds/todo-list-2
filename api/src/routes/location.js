@@ -30,11 +30,11 @@ export async function createLocation(req, res){
   const locSchema = z.object({
     name: z.string(),
     userID: z.number(),
-    streetadd: z.optional(z.string()),
-    city: z.optional(z.string()),
-    state: z.optional(z.string()),
-    country: z.optional(z.string()),
-    postal: z.optional(z.string())
+    streetadd: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    postal: z.string().optional()
   });
   if(!req.body || !locSchema.parse(req.body)){
     res.status(400).send('Invalid request format')
@@ -61,11 +61,11 @@ export async function updateLocation(req, res){
   const locSchema = z.object({
     name: z.string(),
     userID: z.number(),
-    streetadd: z.optional(z.string()),
-    city: z.optional(z.string()),
-    state: z.optional(z.string()),
-    country: z.optional(z.string()),
-    postal: z.optional(z.string()),
+    streetadd: z.string().optional(),
+    city: z.string().optional(),
+    state: z.string().optional(),
+    country: z.string().optional(),
+    postal: z.string().optional(),
   });
   if (!req.body || !locSchema.parse(req.body)) {
     res.status(400).send('Invalid request format');

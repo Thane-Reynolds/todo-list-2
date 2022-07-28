@@ -4,39 +4,54 @@ import { ACTIONS } from '../../Pages/Todos';
 import { Combobox } from '@headlessui/react';
 
 
-export default function NewTaskModal({setShowModal, dispatch, locations, categories }) {
+export default function NewTaskModal({setShowModal, dispatch, locations, categories, user}) {
+  
+  // state for Category combobox
+  const [selectedCategory, setSelectedCategory] = React.useState({
+    id: 0,
+    name: "",
+    userID: user.id
+  });
+  const [catQuery, setCatQuery] = React.useState("");
+  
+  const filteredCategory =
+  catQuery === ""
+  ? categories
+  : categories.filter((category) => {
+    return category.name
+    .toLowerCase()
+    .includes(catQuery.toLowerCase());
+  });
+  
+  // state for Location combobox
+  const [selectedLocation, setSelectedLocation] = React.useState({
+    id: 0,
+    name: "",
+    userID: user.id,
+    streetadd: "",
+    city: "",
+    state: "",
+    country: "",
+    postal: "",
+  });
+  const [locQuery, setLocQuery] = React.useState("");
+  
+  const filteredlocation =
+  catQuery === ""
+  ? locations
+  : locations.filter((location) => {
+    return location.name
+    .toLowerCase()
+    .includes(locQuery.toLowerCase());
+  });
+  
+  // state for new todo, needs to be below selected location and category
   const [newTodo, setNewTodo] = React.useState({
     todoName: "",
-    category: 0,
+    userID: user.id,
     completed: false,
-    location: 0,
   });
-
-  // state for Category combobox
-  const [selectedCategory, setSelectedCategory] = React.useState(categories[0]);
-  const [catQuery, setCatQuery] = React.useState("");
-
-  const filteredCategory =
-    catQuery === ""
-      ? categories
-      : categories.filter((category) => {
-          return category.categoryName
-            .toLowerCase()
-            .includes(catQuery.toLowerCase());
-        });
-
-  // state for Location combobox
-  const [selectedLocation, setSelectedLocation] = React.useState(locations[0]);
-  const [locQuery, setLocQuery] = React.useState("");
-
-  const filteredlocation =
-    catQuery === ""
-      ? locations
-      : locations.filter((location) => {
-          return location.locationName
-            .toLowerCase()
-            .includes(locQuery.toLowerCase());
-        });
+  console.log("Todo", newTodo)
 
   // sets show modal state from the close button, this is passed down from todos
   function handleModal() {
@@ -54,24 +69,25 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
   // handles location change
   function handleLocationChange(event){
     const tempLoc = locations.find((loc) => {
-      return loc.locationName.toLowerCase().includes(selectedLocation.locationName.toLowerCase())
+      return loc.name.toLowerCase().includes(selectedLocation.name.toLowerCase())
     })
     setNewTodo({
       ...newTodo,
-      location: tempLoc.id,
+      locID: tempLoc.id,
     });
   }
 
   // handles category change
    function handleCategoryChange(event) {
+    console.log("CHECK")
      const tempCat = categories.find((cat) => {
-       return cat.categoryName
+       return cat.name
          .toLowerCase()
-         .includes(selectedCategory.categoryName.toLowerCase());
+         .includes(selectedCategory.name.toLowerCase());
      });
      setNewTodo({
        ...newTodo,
-       category: tempCat.id,
+       catID: tempCat.id,
      });
    }
 
@@ -87,7 +103,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
       },
       body: JSON.stringify(newTodo),
     };
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}todos/`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todo`, init)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`Error! ${response.status}`);
@@ -97,9 +113,8 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
       .then(() => {
         setNewTodo({
           todoName: "",
-          category: 0,
+          userID: user.id,
           completed: false,
-          location: 0,
         });
         handleModal();
       });
@@ -114,7 +129,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
       },
     };
 
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}todos`, init)
+    fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/todos/${user.id}`, init)
       .then((response) => {
         if (!response) {
           throw new Error(`Error! ${response.status}`);
@@ -158,24 +173,27 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
           </label>
           <div className={styles.dropDown}>
             <Combobox value={selectedCategory} onChange={setSelectedCategory}>
-              <Combobox.Input
-                name="category"
-                displayValue={(category) => category.categoryName}
-                onChange={(event) => {
-                  setCatQuery(event.target.value);
-                }}
-                onSelect={(e) => handleCategoryChange(e)}
-              />
-              <Combobox.Options>
-                {filteredCategory.map((cat) => (
-                  <Combobox.Option
-                    key={cat.id}
-                    value={cat}
-                  >
-                    {cat.categoryName}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
+              <div className={styles.optionsHolder}>
+                <Combobox.Input
+                  name="category"
+                  displayValue={(category) => category.name}
+                  onChange={(event) => {
+                    setCatQuery(event.target.value);
+                  }}
+                  onSelect={(e) => handleCategoryChange(e)}
+                />
+                <Combobox.Options>
+                  {filteredCategory.map((cat) => (
+                    <Combobox.Option
+                      key={cat.id}
+                      value={cat}
+                      className={styles.options}
+                    >
+                      {cat.name}
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
+              </div>
             </Combobox>
           </div>
         </div>
@@ -187,7 +205,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
             <Combobox value={selectedLocation} onChange={setSelectedLocation}>
               <Combobox.Input
                 name="location"
-                displayValue={(location) => location.locationName}
+                displayValue={(location) => location.name}
                 onChange={(event) => {
                   setLocQuery(event.target.value);
                 }}
@@ -195,11 +213,8 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
               />
               <Combobox.Options>
                 {filteredlocation.map((loc) => (
-                  <Combobox.Option
-                    key={loc.id}
-                    value={loc}
-                  >
-                    {loc.locationName}
+                  <Combobox.Option key={loc.id} value={loc}>
+                    {loc.name}
                   </Combobox.Option>
                 ))}
               </Combobox.Options>
