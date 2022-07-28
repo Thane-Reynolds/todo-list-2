@@ -1,5 +1,5 @@
 import { prisma } from "../lib/db.js";
-import { z } from "zod";
+import { z } from 'zod';
 
 // get locations based on user id
 async function queryLocation(params){
