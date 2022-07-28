@@ -40,10 +40,10 @@ export async function createTodo(req, res){
     dueDate: z.optional(dateSchema),
     completed: z.optional(z.boolean()),
     userID: z.number(),
-    catID: z.optional(z.union([z.void(), z.number()])),
-    locID: z.optional(z.union([z.void(), z.number()])),
+    catID: z.number().optional(),
+    locID: z.number().optional(),
   });
-  console.log(req.body) // testing to make sure its coming through correct
+  console.log("incoming request",req.body) // testing to make sure its coming through correct
   if(!req.body || !todoSchema.parse(req.body)){
     res.status(400).send('todoName and userID required')
     return
@@ -73,8 +73,8 @@ export async function updateTodo(req, res){
     dueDate: z.optional(dateSchema),
     completed: z.optional(z.boolean()),
     userID: z.number(),
-    catID: z.optional(z.union([z.void(), z.number()])),
-    locID: z.optional(z.union([z.void(), z.number()])),
+    catID: z.number().optional(),
+    locID: z.number().optional(),
   });
   if (
     !req.body ||

@@ -192,11 +192,11 @@ export default function Todos (){
         })}
         <ButtonRowDiv>
           <NewTaskButton handleModal={handleModal} />
-          <Link to="/category">
+          <Link to={`/category/${user.id}`}>
             <CategoryButton categories={categories} />
           </Link>
-          <Link to="/location">
-            <LocationButton locations={locations} />
+          <Link to={`/location/${user.id}`}>
+            <LocationButton locations={locations}/>
           </Link>
         </ButtonRowDiv>
       </ToDo>

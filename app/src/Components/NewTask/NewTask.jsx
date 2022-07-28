@@ -79,6 +79,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
 
   // handles category change
    function handleCategoryChange(event) {
+    console.log("CHECK")
      const tempCat = categories.find((cat) => {
        return cat.name
          .toLowerCase()
@@ -113,9 +114,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
         setNewTodo({
           todoName: "",
           userID: user.id,
-          catID: null,
           completed: false,
-          locID: null,
         });
         handleModal();
       });
@@ -174,24 +173,27 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
           </label>
           <div className={styles.dropDown}>
             <Combobox value={selectedCategory} onChange={setSelectedCategory}>
-              <Combobox.Input
-                name="category"
-                displayValue={(category) => category.name}
-                onChange={(event) => {
-                  setCatQuery(event.target.value);
-                }}
-                onSelect={(e) => handleCategoryChange(e)}
-              />
-              <Combobox.Options>
-                {filteredCategory.map((cat) => (
-                  <Combobox.Option
-                    key={cat.id}
-                    value={cat}
-                  >
-                    {cat.name}
-                  </Combobox.Option>
-                ))}
-              </Combobox.Options>
+              <div className={styles.optionsHolder}>
+                <Combobox.Input
+                  name="category"
+                  displayValue={(category) => category.name}
+                  onChange={(event) => {
+                    setCatQuery(event.target.value);
+                  }}
+                  onSelect={(e) => handleCategoryChange(e)}
+                />
+                <Combobox.Options>
+                  {filteredCategory.map((cat) => (
+                    <Combobox.Option
+                      key={cat.id}
+                      value={cat}
+                      className={styles.options}
+                    >
+                      {cat.name}
+                    </Combobox.Option>
+                  ))}
+                </Combobox.Options>
+              </div>
             </Combobox>
           </div>
         </div>
@@ -211,10 +213,7 @@ export default function NewTaskModal({setShowModal, dispatch, locations, categor
               />
               <Combobox.Options>
                 {filteredlocation.map((loc) => (
-                  <Combobox.Option
-                    key={loc.id}
-                    value={loc}
-                  >
+                  <Combobox.Option key={loc.id} value={loc}>
                     {loc.name}
                   </Combobox.Option>
                 ))}

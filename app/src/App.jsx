@@ -35,8 +35,8 @@ function App() {
         <Routes>
           <Route path='/' element={ <Todos/> } />
           <Route path='tododetails' element={<TodoDetail />} />
-          <Route path='location' element={<Location />} />
-          <Route path='category' element={<Categories />} />
+          <Route path='location/:userID' element={<Location />} />
+          <Route path='category/:userID' element={<Categories />} />
         </Routes>
       </BrowserRouter>
     </Wrapper>

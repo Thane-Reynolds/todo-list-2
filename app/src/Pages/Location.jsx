@@ -1,21 +1,27 @@
 import * as React from 'react'
 import styles from '../Components/Location/newLocation.module.css'
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import Portal from '../Components/Modal/Portal';
 import SuccessOrFail from '../Components/Location/SuccessOrFail';
 
-export default function Location(){
+export default function Location(props){
+  const { userID } = useParams();
+  const id = parseInt(userID)
   const [newLocation, setNewLocation] = React.useState({
-    locationName: "",
-    streetAddress: "",
+    name: "",
+    userID: id,
+    streetadd: "",
     city: "",
     state: "",
-    zipcode: ""
+    country: "",
+    postal: ""
   });
-  const [requestStatus, setRequestStatus] = React.useState('')
+  const [requestStatus, setRequestStatus] = React.useState()
+
+  console.log("id", id, typeof(id))
  
   // handle submit of form
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     const init ={
       method: "POST",
@@ -24,56 +30,64 @@ export default function Location(){
       },
       body: JSON.stringify(newLocation)
     }
-    fetch(`${import.meta.env.VITE_API_ENDPOINT}locations`, init)
+    await fetch(`${import.meta.env.VITE_API_ENDPOINT}/api/location`, init)
       .then((response) => {
         if (!response.ok) {
-          setRequestStatus('false');
+          setRequestStatus(false);
           throw new Error(`Error! ${response.status}`);
         } else {
         setNewLocation({
-          locationName: "",
-          streetAddress: "",
+          name: "",
+          userID: id,
+          streetadd: "",
           city: "",
           state: "",
-          zipcode: "",
-        });
-        setRequestStatus("true");
+          country: "",
+          postal: "",
+        })
       }
-      })
-      console.log("request status", requestStatus)
+    })
+    .then(setRequestStatus(true));
+    console.log("request status", requestStatus)
   }
   // to set state
   function handleChange(e){
-    switch(e.target.name){
-      case "locationName":
+    switch (e.target.name) {
+      case 'name':
         setNewLocation({
           ...newLocation,
-          locationName: e.target.value
-        })
+          name: e.target.value,
+        });
         break;
-      case "streetAddress":
+      case 'streetadd':
         setNewLocation({
           ...newLocation,
-          streetAddress: e.target.value
-        })
+          streetadd: e.target.value,
+        });
         break;
-      case "city":
+      case 'city':
         setNewLocation({
           ...newLocation,
-          city: e.target.value
-        })
+          city: e.target.value,
+        });
         break;
-      case "state":
+      case 'state':
         setNewLocation({
           ...newLocation,
-          state: e.target.value
-        })
+          state: e.target.value,
+        });
         break;
-      case "zipcode":
+      case 'country':
         setNewLocation({
           ...newLocation,
-          zipcode: e.target.value
-        })
+          country: e.target.value,
+        });
+        break;
+      case 'postal':
+        setNewLocation({
+          ...newLocation,
+          postal: e.target.value,
+        });
         break;
       default:
         break;
@@ -83,7 +97,7 @@ export default function Location(){
 
   return (
     <div>
-      {(requestStatus === 'true' || requestStatus === 'false') && (
+      {(requestStatus === true || requestStatus === false) && (
         <Portal>
           <SuccessOrFail status={requestStatus} />
         </Portal>
@@ -94,35 +108,33 @@ export default function Location(){
             <h1 className={styles.title}>Add a new Location</h1>
           </div>
           <div className={styles.closeContainer}>
-          <Link to="/">
-            <button className={styles.closeButton}>
-              X
-            </button>
-          </Link>
+            <Link to="/">
+              <button className={styles.closeButton}>X</button>
+            </Link>
           </div>
         </div>
         <form onSubmit={(e) => handleSubmit(e)} className={styles.todoEntry}>
           <div className={styles.inputHolder}>
-            <label htmlFor="locationName" className={styles.label}>
+            <label htmlFor="name" className={styles.label}>
               Location Name:
             </label>
             <input
-              name="locationName"
+              name="name"
               onChange={(e) => handleChange(e)}
-              value={newLocation.locationName}
+              value={newLocation.name}
               className={styles.input}
-              />
+            />
           </div>
           <div className={styles.inputHolder}>
-            <label htmlFor="streetAddress" className={styles.label}>
+            <label htmlFor="streetadd" className={styles.label}>
               Street Address:
             </label>
             <input
-              name="streetAddress"
+              name="streetadd"
               onChange={(e) => handleChange(e)}
-              value={newLocation.streetAddress}
+              value={newLocation.streetadd}
               className={styles.input}
-              />
+            />
           </div>
           <div className={styles.inputHolder}>
             <label htmlFor="city" className={styles.label}>
@@ -133,7 +145,7 @@ export default function Location(){
               onChange={(e) => handleChange(e)}
               value={newLocation.city}
               className={styles.input}
-              />
+            />
           </div>
           <div className={styles.inputHolder}>
             <label htmlFor="state" className={styles.label}>
@@ -144,18 +156,29 @@ export default function Location(){
               onChange={(e) => handleChange(e)}
               value={newLocation.state}
               className={styles.input}
-              />
+            />
           </div>
           <div className={styles.inputHolder}>
-            <label htmlFor="zipcode" className={styles.label}>
-              Zipcode:
+            <label htmlFor="country" className={styles.label}>
+              Country:
             </label>
             <input
-              name="zipcode"
+              name="country"
               onChange={(e) => handleChange(e)}
-              value={newLocation.zipcode}
+              value={newLocation.country}
               className={styles.input}
-              />
+            />
+          </div>
+          <div className={styles.inputHolder}>
+            <label htmlFor="postal" className={styles.label}>
+              postal:
+            </label>
+            <input
+              name="postal"
+              onChange={(e) => handleChange(e)}
+              value={newLocation.postal}
+              className={styles.input}
+            />
           </div>
           <div className={styles.buttonDiv}>
             <button type="submit" className={styles.button}>
