@@ -30,7 +30,6 @@ function App() {
 
   return (
     <Wrapper>
-      <h1> To-Do app in progress</h1>
       <BrowserRouter>
         <Routes>
           <Route path='/' element={ <Todos/> } />
