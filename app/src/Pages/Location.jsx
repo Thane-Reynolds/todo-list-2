@@ -97,11 +97,11 @@ export default function Location(props){
 
   return (
     <div>
-      {(requestStatus === true || requestStatus === false) && (
+      {/* {(requestStatus === true || requestStatus === false) && (
         <Portal>
           <SuccessOrFail status={requestStatus} />
         </Portal>
-      )}
+      )} */}
       <section className={styles.wrapper}>
         <div className={styles.topBar}>
           <div className={styles.titleContainer}>
